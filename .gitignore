@@ -28,3 +28,6 @@ gen/
 
 # File TODO
 TODO
+
+# SQLite DB
+db/
