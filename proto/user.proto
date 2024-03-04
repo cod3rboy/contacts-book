@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "github.com/cod3rboy/contacts-book/gen/user";
+option go_package = "github.com/cod3rboy/contacts-book/gen";
 
 package user;
 
