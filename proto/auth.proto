@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+option go_package="github.com/cod3rboy/contacts-book/gen/auth";
+
+package auth;
+
+import "google/protobuf/Empty.proto";
+
+service Auth {
+  rpc Login (auth.Credentials) returns (auth.AccessGrant);
+  rpc Logout (auth.Token) returns (google.protobuf.Empty);
+}
+
+message Credentials {
+  string email_id = 1;
+  string password = 2;
+}
+
+message Token {
+  string jwt = 1;
+  int64 expiry = 2;
+}
+
+message User {
+  string name = 1;
+  string email = 2;
+}
+
+message AccessGrant {
+  auth.Token token = 1;
+  auth.User user = 2;
+}

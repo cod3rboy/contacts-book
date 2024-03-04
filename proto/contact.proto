@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+option go_package = "github.com/cod3rboy/contacts-book/gen/contact";
+
+package contact;
+
+import "google/protobuf/Empty.proto";
+import "proto/user.proto";
+
+service Contact {
+  rpc Create(contact.Details) returns (contact.RecordID);
+  rpc Get(contact.RecordID) returns (contact.Record);
+  rpc GetAll (google.protobuf.Empty) returns (contact.List);
+  rpc Update(contact.RecordUpdate) returns (contact.Record);
+  rpc Delete(contact.RecordID) returns (google.protobuf.Empty);
+}
+
+message RecordUpdate {
+  map <string, string> values = 1;
+}
+
+message List {
+  repeated Record records = 1;
+}
+
+message Record {
+  int64 id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  user.Gender gender = 4;
+  string email = 5;
+  string mobile_number = 6;
+  contact.Address address = 7;
+}
+
+message RecordID {
+  int64 id = 1;
+}
+
+message Details {
+  string first_name = 1;
+  string last_name = 2;
+  user.Gender gender = 3;
+  string email = 4;
+  string mobile_number = 5;
+  contact.Address address = 6;
+}
+
+message Address {
+  string street = 1;
+  string area = 2;
+  string city = 3;
+  string province_state = 4;
+  string country = 5;
+  string pincode = 6;
+}

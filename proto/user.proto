@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+option go_package = "github.com/cod3rboy/contacts-book/gen/user";
+
+package user;
+
+import "google/protobuf/Empty.proto";
+
+service User {
+  rpc Register(user.Account) returns (google.protobuf.Empty);
+  rpc Profile(user.AccessToken) returns (user.Profile);
+}
+
+message AccessToken {
+  string value = 1;
+}
+
+enum Gender {
+  UNSPECIFIED = 0;
+  MALE = 1;
+  FEMALE = 2;
+}
+
+message Account {
+  string full_name = 1;
+  user.Gender gender = 2;
+  string email_id = 3;
+  string mobile_number = 4;
+  string password = 5;
+}
+
+message Profile {
+  string full_name = 1;
+  user.Gender gender = 2;
+  string email_id = 3;
+  string mobile_number = 4;
+}
