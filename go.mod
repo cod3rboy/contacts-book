@@ -4,7 +4,10 @@ go 1.22.0
 
 require (
 	entgo.io/ent v0.13.1
+	github.com/golang-jwt/jwt/v5 v5.2.0
 	github.com/mattn/go-sqlite3 v1.14.16
+	github.com/patrickmn/go-cache v2.1.0+incompatible
+	golang.org/x/crypto v0.18.0
 	google.golang.org/grpc v1.62.0
 	google.golang.org/protobuf v1.32.0
 )

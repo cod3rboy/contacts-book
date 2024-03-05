@@ -6,24 +6,30 @@ import (
 	"log"
 	"net"
 	"os"
+	"time"
 
 	"github.com/cod3rboy/contacts-book/ent"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/patrickmn/go-cache"
 	"google.golang.org/grpc"
 )
 
+// TODO: Retrieve values from configuration
 const SQLITE_DB_PATH = "./db/contracts-book.db"
 const PORT_GRPC_SERVER = 8083
+const JWT_SIGNING_TOKEN = "abcdefghijklmnop"
 
 type Application struct {
 	Db     *ent.Client
 	Server *grpc.Server
+	Cache  *cache.Cache
 }
 
 func NewApplication() *Application {
 	return &Application{
 		Db:     createDbClient(),
 		Server: grpc.NewServer(),
+		Cache:  cache.New(5*time.Minute, 10*time.Minute),
 	}
 }
 
@@ -40,6 +46,7 @@ func (app *Application) Start() {
 
 func (app *Application) Cleanup() {
 	app.Db.Close()
+	app.Cache.Flush()
 }
 
 func (app *Application) MigrateSchema() {
