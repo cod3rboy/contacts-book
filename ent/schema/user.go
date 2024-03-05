@@ -16,7 +16,7 @@ func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("full_name").NotEmpty(),
 		field.Enum("gender").Values("male", "female"),
-		field.String("email_id").NotEmpty(),
+		field.String("email_id").NotEmpty().Unique(),
 		field.String("mobile_number").NotEmpty().MinLen(10).MaxLen(10),
 		field.String("password_hash").NotEmpty(),
 	}

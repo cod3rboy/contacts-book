@@ -38,7 +38,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "full_name", Type: field.TypeString},
 		{Name: "gender", Type: field.TypeEnum, Enums: []string{"male", "female"}},
-		{Name: "email_id", Type: field.TypeString},
+		{Name: "email_id", Type: field.TypeString, Unique: true},
 		{Name: "mobile_number", Type: field.TypeString, Size: 10},
 		{Name: "password_hash", Type: field.TypeString},
 	}

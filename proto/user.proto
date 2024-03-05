@@ -8,11 +8,7 @@ import "google/protobuf/Empty.proto";
 
 service User {
   rpc Register(user.Account) returns (google.protobuf.Empty);
-  rpc Profile(user.AccessToken) returns (user.Profile);
-}
-
-message AccessToken {
-  string value = 1;
+  rpc Profile(google.protobuf.Empty) returns (user.Profile);
 }
 
 enum Gender {
