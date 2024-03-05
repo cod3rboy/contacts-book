@@ -2,9 +2,11 @@ package intercept
 
 import (
 	"context"
+	"log"
 	"strings"
 
 	"github.com/cod3rboy/contacts-book/app"
+	"github.com/cod3rboy/contacts-book/ent/user"
 	"github.com/cod3rboy/contacts-book/svc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -37,8 +39,15 @@ func AuthInterceptor(application *app.Application) grpc.UnaryServerInterceptor {
 			if !verified {
 				return nil, status.Error(codes.Unauthenticated, "access denied")
 			}
-			var emailKey ContextKey = "auth-user-email"
-			ctx = context.WithValue(ctx, emailKey, email)
+			authUser, err := application.Db.User.Query().
+				Where(user.EmailID(email)).
+				First(ctx)
+			if err != nil {
+				log.Printf("failed to find authenticated user: %s", email)
+				return nil, status.Error(codes.Internal, "internal error")
+			}
+			var authUserKey ContextKey = "auth-user"
+			ctx = context.WithValue(ctx, authUserKey, authUser)
 		}
 		return handler(ctx, req)
 	}

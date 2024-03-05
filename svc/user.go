@@ -50,19 +50,9 @@ func (s *userService) Register(ctx context.Context, account *pb.Account) (*empty
 }
 
 func (s *userService) Profile(ctx context.Context, _ *emptypb.Empty) (*pb.Profile, error) {
-	authUserEmail, ok := ctx.Value("auth-user-email").(string)
+	authUser, ok := ctx.Value("auth-user").(*ent.User)
 	if !ok {
-		log.Printf("failed to get auth-user-email from context: %v", ctx.Value("auth-user-email"))
-		return nil, status.Error(codes.Internal, "internal error")
-	}
-	authUser, err := s.app.Db.User.Query().
-		Where(user.EmailID(authUserEmail)).
-		First(ctx)
-	if ent.IsNotFound(err) {
-		log.Printf("failed to find auth user profile by email: %s", authUserEmail)
-		return nil, status.Error(codes.Internal, "internal error")
-	} else if err != nil {
-		log.Printf("unknown error while finding auth user profile: %v", err)
+		log.Printf("failed to get auth-user from context: %v", ctx.Value("auth-user"))
 		return nil, status.Error(codes.Internal, "internal error")
 	}
 
