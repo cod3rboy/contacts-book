@@ -16,7 +16,8 @@ service Contact {
 }
 
 message RecordUpdate {
-  map <string, string> values = 1;
+  int64 id = 1;
+  map <string, string> values = 2;
 }
 
 message List {

@@ -23,7 +23,8 @@ type userService struct {
 }
 
 func (s *userService) Register(ctx context.Context, account *pb.Account) (*emptypb.Empty, error) {
-	gender, err := convertToEntGender(account.GetGender())
+	userGender := user.Gender(strings.ToLower(account.GetGender().String()))
+	err := user.GenderValidator(userGender)
 	if err != nil {
 		log.Printf("invalid gender: %v", account.GetGender())
 		return nil, status.Error(codes.InvalidArgument, "invalid gender specified")
@@ -37,7 +38,7 @@ func (s *userService) Register(ctx context.Context, account *pb.Account) (*empty
 	_, err = s.app.Db.User.
 		Create().
 		SetFullName(account.FullName).
-		SetGender(gender).
+		SetGender(userGender).
 		SetEmailID(account.GetEmailId()).
 		SetMobileNumber(account.GetMobileNumber()).
 		SetPasswordHash(pwdHash).
@@ -58,7 +59,7 @@ func (s *userService) Profile(ctx context.Context, _ *emptypb.Empty) (*pb.Profil
 
 	profile := &pb.Profile{
 		FullName:     authUser.FullName,
-		Gender:       convertToProtoGender(authUser.Gender),
+		Gender:       convertToProtoGender(authUser.Gender.String()),
 		EmailId:      authUser.EmailID,
 		MobileNumber: authUser.MobileNumber,
 	}
@@ -66,13 +67,7 @@ func (s *userService) Profile(ctx context.Context, _ *emptypb.Empty) (*pb.Profil
 	return profile, nil
 }
 
-func convertToEntGender(gender pb.Gender) (user.Gender, error) {
-	userGender := user.Gender(strings.ToLower(gender.String()))
-	err := user.GenderValidator(userGender)
-	return userGender, err
-}
-
-func convertToProtoGender(gender user.Gender) pb.Gender {
+func convertToProtoGender(gender string) pb.Gender {
 	switch gender {
 	case "male":
 		return pb.Gender_MALE
