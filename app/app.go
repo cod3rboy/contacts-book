@@ -27,20 +27,27 @@ type Application struct {
 
 func NewApplication() *Application {
 	return &Application{
-		Db:     createDbClient(),
-		Server: grpc.NewServer(),
-		Cache:  cache.New(5*time.Minute, 10*time.Minute),
+		Db:    createDbClient(),
+		Cache: cache.New(5*time.Minute, 10*time.Minute),
 	}
 }
 
+func (app *Application) SetServer(server *grpc.Server) {
+	app.Server = server
+}
+
 func (app *Application) Start() {
+	if app.Server == nil {
+		log.Fatal("application server was not set. did you call SetServer?")
+	}
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", PORT_GRPC_SERVER))
 	if err != nil {
 		log.Fatalf("failed to listen on address :%d", PORT_GRPC_SERVER)
 	}
 	log.Printf("starting grpc server at address :%d", PORT_GRPC_SERVER)
+
 	if err := app.Server.Serve(listener); err != nil {
-		log.Fatalf("failed to start grpc server %v", err)
+		log.Fatalf("failed to start grpc server: %v", err)
 	}
 }
 

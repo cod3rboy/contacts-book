@@ -93,3 +93,23 @@ func GenerateToken(name, email string) (string, int64, error) {
 	}
 	return signedToken, expiry.UnixMilli(), err
 }
+
+func VerifyToken(jwtToken string) (string, bool) {
+	claims := jwt.MapClaims{}
+	_, err := jwt.ParseWithClaims(jwtToken, claims, func(t *jwt.Token) (interface{}, error) {
+		return []byte(app.JWT_SIGNING_TOKEN), nil
+	})
+	if err != nil {
+		return "", false
+	}
+	expiry, ok := claims["exp"].(int64)
+	if !ok {
+		return "", false
+	}
+	expired := time.Now().After(time.UnixMilli(expiry))
+	if expired {
+		return "", false
+	}
+	email, ok := claims["email"].(string)
+	return email, ok
+}
