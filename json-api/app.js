@@ -39,7 +39,7 @@ app.use(
 
 app.use("/auth", authRouter);
 app.use("/user", userRouter);
-app.use("/contact", contactRouter);
+app.use("/contacts", contactRouter);
 
 /**
  * Normalize a port into a number, string, or false.
