@@ -31,13 +31,13 @@ async function createContact(
     const meta = new grpc.Metadata();
     meta.add("Authorization", "Bearer " + jwt);
     const details = new Details();
-    const address = new Address();
-    address.setStreet(address.street ?? "");
-    address.setArea(address.area ?? "");
-    address.setCity(address.city ?? "");
-    address.setProvinceState(address.provinceState ?? "");
-    address.setCountry(address.country ?? "");
-    address.setPincode(address.pincode ?? "");
+    const contactAddress = new Address();
+    contactAddress.setStreet(address.street ?? "");
+    contactAddress.setArea(address.area ?? "");
+    contactAddress.setCity(address.city ?? "");
+    contactAddress.setProvinceState(address.provinceState ?? "");
+    contactAddress.setCountry(address.country ?? "");
+    contactAddress.setPincode(address.pincode ?? "");
     details.setFirstName(firstName);
     details.setLastName(lastName);
     switch (gender) {
@@ -53,7 +53,7 @@ async function createContact(
     details.setGender(gender);
     details.setEmail(email);
     details.setMobileNumber(mobileNumber);
-    details.setAddress(address);
+    details.setAddress(contactAddress);
 
     client.create(details, meta, (error, response) => {
       if (error) {
@@ -111,16 +111,7 @@ async function updateContact(jwt, id, patch = {}) {
       values["last_name"] = patch.lastName;
     }
     if (patch.gender) {
-      switch (patch.gender) {
-        case "male":
-          values["gender"] = Gender.MALE;
-          break;
-        case "female":
-          values["gender"] = Gender.FEMALE;
-          break;
-        default:
-          values["gender"] = Gender.UNSPECIFIED;
-      }
+      values["gender"] = patch.gender;
     }
     if (patch.email) {
       values["email"] = patch.email;
@@ -150,7 +141,9 @@ async function updateContact(jwt, id, patch = {}) {
     }
     const recordUpdate = new RecordUpdate();
     recordUpdate.setId(id);
-    recordUpdate.setValues(values);
+    for (let key in values) {
+      recordUpdate.getValuesMap().set(key, values[key]);
+    }
     client.update(recordUpdate, meta, (error, response) => {
       if (error) {
         reject(error);

@@ -63,7 +63,7 @@ func (s *contactService) Create(ctx context.Context, details *pb.Details) (*pb.R
 		return nil, status.Error(codes.Internal, "internal error")
 	}
 
-	_, err = s.app.Db.User.UpdateOne(authUser).AddContacts(newContact).Save(ctx)
+	_, err = tx.User.UpdateOne(authUser).AddContacts(newContact).Save(ctx)
 	if err != nil {
 		tx.Rollback()
 		log.Printf("failed to link contact with owner: %v", err)
@@ -140,11 +140,12 @@ func (s *contactService) Update(ctx context.Context, data *pb.RecordUpdate) (*pb
 	}
 
 	values := data.GetValues()
+	update := userContact.Update()
 	if firstName, ok := values["first_name"]; ok {
-		userContact.FirstName = firstName
+		update.SetFirstName(firstName)
 	}
 	if lastName, ok := values["last_name"]; ok {
-		userContact.LastName = lastName
+		update.SetLastName(lastName)
 	}
 	if gender, ok := values["gender"]; ok {
 		contactGender := contact.Gender(strings.ToLower(gender))
@@ -153,34 +154,43 @@ func (s *contactService) Update(ctx context.Context, data *pb.RecordUpdate) (*pb
 			log.Printf("invalid gender: %s", gender)
 			return nil, status.Error(codes.InvalidArgument, "invalid gender specified")
 		}
-		userContact.Gender = contactGender
+		update.SetGender(contactGender)
 	}
 	if email, ok := values["email"]; ok {
-		userContact.Email = email
+		update.SetEmail(email)
 	}
 	if mobileNumber, ok := values["mobile_number"]; ok {
-		userContact.MobileNumber = mobileNumber
+		update.SetMobileNumber(mobileNumber)
+	}
+	userAddress := &schema.Address{
+		Street:        userContact.Address.Street,
+		Area:          userContact.Address.Area,
+		City:          userContact.Address.City,
+		ProvinceState: userContact.Address.ProvinceState,
+		Country:       userContact.Address.Country,
+		PinCode:       userContact.Address.PinCode,
 	}
 	if addressStreet, ok := values["address.street"]; ok {
-		userContact.Address.Street = addressStreet
+		userAddress.Street = addressStreet
 	}
 	if addressArea, ok := values["address.area"]; ok {
-		userContact.Address.Area = addressArea
+		userAddress.Area = addressArea
 	}
 	if addressCity, ok := values["address.city"]; ok {
-		userContact.Address.City = addressCity
+		userAddress.City = addressCity
 	}
 	if addressProvinceState, ok := values["address.province_state"]; ok {
-		userContact.Address.ProvinceState = addressProvinceState
+		userAddress.ProvinceState = addressProvinceState
 	}
 	if addressCountry, ok := values["address.country"]; ok {
-		userContact.Address.Country = addressCountry
+		userAddress.Country = addressCountry
 	}
 	if addressPincode, ok := values["address.pincode"]; ok {
-		userContact.Address.PinCode = addressPincode
+		userAddress.PinCode = addressPincode
 	}
+	update.SetAddress(userAddress)
 
-	userContact, err = s.app.Db.Contact.UpdateOne(userContact).Save(ctx)
+	userContact, err = update.Save(ctx)
 	if err != nil {
 		log.Printf("failed to update contact for user %s with id %d: %v", authUser.EmailID, contactId, err)
 		return nil, status.Error(codes.Internal, "internal error")
