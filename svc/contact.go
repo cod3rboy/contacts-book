@@ -10,6 +10,7 @@ import (
 	"github.com/cod3rboy/contacts-book/ent/contact"
 	"github.com/cod3rboy/contacts-book/ent/schema"
 	pb "github.com/cod3rboy/contacts-book/gen/proto"
+	"github.com/cod3rboy/contacts-book/intercept/key"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -24,9 +25,9 @@ type contactService struct {
 }
 
 func (s *contactService) Create(ctx context.Context, details *pb.Details) (*pb.RecordID, error) {
-	authUser, ok := ctx.Value("auth-user").(*ent.User)
+	authUser, ok := ctx.Value(key.AuthUserContextKey).(*ent.User)
 	if !ok {
-		log.Printf("failed to get auth-user from context: %v", ctx.Value("auth-user"))
+		log.Printf("failed to get authenticated user from context: %v", ctx.Value(key.AuthUserContextKey))
 		return nil, status.Error(codes.Internal, "internal error")
 	}
 	contactGender := contact.Gender(strings.ToLower(details.GetGender().String()))
@@ -77,9 +78,9 @@ func (s *contactService) Create(ctx context.Context, details *pb.Details) (*pb.R
 }
 
 func (s *contactService) Get(ctx context.Context, id *pb.RecordID) (*pb.Record, error) {
-	authUser, ok := ctx.Value("auth-user").(*ent.User)
+	authUser, ok := ctx.Value(key.AuthUserContextKey).(*ent.User)
 	if !ok {
-		log.Printf("failed to get auth-user from context: %v", ctx.Value("auth-user"))
+		log.Printf("failed to get authenticated user from context: %v", ctx.Value(key.AuthUserContextKey))
 		return nil, status.Error(codes.Internal, "internal error")
 	}
 
@@ -98,9 +99,9 @@ func (s *contactService) Get(ctx context.Context, id *pb.RecordID) (*pb.Record, 
 }
 
 func (s *contactService) GetAll(ctx context.Context, _ *emptypb.Empty) (*pb.List, error) {
-	authUser, ok := ctx.Value("auth-user").(*ent.User)
+	authUser, ok := ctx.Value(key.AuthUserContextKey).(*ent.User)
 	if !ok {
-		log.Printf("failed to get auth-user from context: %v", ctx.Value("auth-user"))
+		log.Printf("failed to get authenticated user from context: %v", ctx.Value(key.AuthUserContextKey))
 		return nil, status.Error(codes.Internal, "internal error")
 	}
 
@@ -119,9 +120,9 @@ func (s *contactService) GetAll(ctx context.Context, _ *emptypb.Empty) (*pb.List
 }
 
 func (s *contactService) Update(ctx context.Context, data *pb.RecordUpdate) (*pb.Record, error) {
-	authUser, ok := ctx.Value("auth-user").(*ent.User)
+	authUser, ok := ctx.Value(key.AuthUserContextKey).(*ent.User)
 	if !ok {
-		log.Printf("failed to get auth-user from context: %v", ctx.Value("auth-user"))
+		log.Printf("failed to get authenticated user from context: %v", ctx.Value(key.AuthUserContextKey))
 		return nil, status.Error(codes.Internal, "internal error")
 	}
 
@@ -189,9 +190,9 @@ func (s *contactService) Update(ctx context.Context, data *pb.RecordUpdate) (*pb
 }
 
 func (s *contactService) Delete(ctx context.Context, id *pb.RecordID) (*emptypb.Empty, error) {
-	authUser, ok := ctx.Value("auth-user").(*ent.User)
+	authUser, ok := ctx.Value(key.AuthUserContextKey).(*ent.User)
 	if !ok {
-		log.Printf("failed to get auth-user from context: %v", ctx.Value("auth-user"))
+		log.Printf("failed to get authenticated user from context: %v", ctx.Value(key.AuthUserContextKey))
 		return nil, status.Error(codes.Internal, "internal error")
 	}
 

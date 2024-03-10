@@ -11,5 +11,3 @@ func RPCInterceptors(app *app.Application) []grpc.ServerOption {
 	}
 	return interceptors
 }
-
-type ContextKey string

@@ -9,6 +9,7 @@ import (
 	"github.com/cod3rboy/contacts-book/ent"
 	"github.com/cod3rboy/contacts-book/ent/user"
 	pb "github.com/cod3rboy/contacts-book/gen/proto"
+	"github.com/cod3rboy/contacts-book/intercept/key"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -51,9 +52,9 @@ func (s *userService) Register(ctx context.Context, account *pb.Account) (*empty
 }
 
 func (s *userService) Profile(ctx context.Context, _ *emptypb.Empty) (*pb.Profile, error) {
-	authUser, ok := ctx.Value("auth-user").(*ent.User)
+	authUser, ok := ctx.Value(key.AuthUserContextKey).(*ent.User)
 	if !ok {
-		log.Printf("failed to get auth-user from context: %v", ctx.Value("auth-user"))
+		log.Printf("failed to get authenticated user from context: %v", ctx.Value(key.AuthUserContextKey))
 		return nil, status.Error(codes.Internal, "internal error")
 	}
 

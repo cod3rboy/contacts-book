@@ -102,11 +102,11 @@ func VerifyToken(jwtToken string) (string, bool) {
 	if err != nil {
 		return "", false
 	}
-	expiry, ok := claims["exp"].(int64)
+	expiry, ok := claims["exp"].(float64)
 	if !ok {
 		return "", false
 	}
-	expired := time.Now().After(time.UnixMilli(expiry))
+	expired := time.Now().After(time.UnixMilli(int64(expiry)))
 	if expired {
 		return "", false
 	}
