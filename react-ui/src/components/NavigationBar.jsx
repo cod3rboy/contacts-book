@@ -15,7 +15,11 @@ export default function NavigationBar() {
               <NavDropdown title={user.name} id="nav-dropdown">
                 <NavDropdown.Item>
                   <Link
-                    style={{ color: "black", textDecoration: "none" }}
+                    style={{
+                      display: "block",
+                      color: "black",
+                      textDecoration: "none",
+                    }}
                     to="/profile"
                   >
                     Profile
@@ -24,7 +28,11 @@ export default function NavigationBar() {
                 <NavDropdown.Divider />
                 <NavDropdown.Item>
                   <Link
-                    style={{ color: "black", textDecoration: "none" }}
+                    style={{
+                      display: "block",
+                      color: "black",
+                      textDecoration: "none",
+                    }}
                     to="/logout"
                   >
                     Logout
