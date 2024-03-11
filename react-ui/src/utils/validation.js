@@ -15,3 +15,27 @@ export function validatePwd(password = "") {
   }
   return "";
 }
+
+export function validateFullName(password = "") {
+  if (password.trim() === "") {
+    return "full name is empty";
+  }
+  return "";
+}
+
+export function validateMobileNumber(mobileNumber) {
+  if (mobileNumber.trim() === "") {
+    return "mobile number is empty";
+  }
+  if (!/^\d{10}$/.test(mobileNumber)) {
+    return "invalid mobile number";
+  }
+  return "";
+}
+
+export function validateRepeatPwd(pwd, rPwd) {
+  if (pwd !== rPwd) {
+    return "password does not match";
+  }
+  return "";
+}
