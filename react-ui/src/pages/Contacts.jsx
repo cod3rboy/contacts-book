@@ -12,6 +12,7 @@ import {
   createContact,
   deleteContact,
 } from "../api/contacts.js";
+import { genderNumber } from "../utils/utils.js";
 
 export default function Contacts() {
   const contacts = useContacts();
@@ -47,6 +48,7 @@ export default function Contacts() {
     createContact(token, record)
       .then(({ id }) => {
         record.id = id;
+        record.gender = genderNumber(record.gender);
         contacts.addContact(record);
         setShowNewModal(false);
       })

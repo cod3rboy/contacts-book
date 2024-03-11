@@ -10,10 +10,10 @@ export function genderName(id) {
 }
 
 export function genderNumber(name) {
-  switch (name) {
-    case "Male":
+  switch (name.toLowerCase()) {
+    case "male":
       return 1;
-    case "Female":
+    case "female":
       return 2;
   }
 }
