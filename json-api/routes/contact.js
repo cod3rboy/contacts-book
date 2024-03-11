@@ -64,7 +64,7 @@ router.delete("/:id", (req, res) => {
   contactService
     .deleteContact(req.token, req.params.id)
     .then(() => {
-      res.status(204).json({ msg: "contact deleted successfully" });
+      res.status(200).json({ msg: "contact deleted successfully" });
     })
     .catch((error) => {
       console.error(error);

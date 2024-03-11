@@ -1,6 +1,13 @@
 import { Col, Form, InputGroup, Row } from "react-bootstrap";
 
-export default function SearchBox({ onChange, onInput, value, ...props }) {
+export default function SearchBox({
+  id,
+  placeholder,
+  onChange,
+  onInput,
+  value,
+  ...props
+}) {
   return (
     <Form {...props}>
       <Row>
@@ -11,8 +18,8 @@ export default function SearchBox({ onChange, onInput, value, ...props }) {
               value={value}
               onChange={onChange}
               onInput={onInput}
-              id="searchName"
-              placeholder="search any name"
+              id={id}
+              placeholder={placeholder}
             />
           </InputGroup>
         </Col>

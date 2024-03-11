@@ -5,6 +5,7 @@ import (
 	"log"
 	"strings"
 
+	"entgo.io/ent/dialect/sql"
 	"github.com/cod3rboy/contacts-book/app"
 	"github.com/cod3rboy/contacts-book/ent"
 	"github.com/cod3rboy/contacts-book/ent/contact"
@@ -105,7 +106,7 @@ func (s *contactService) GetAll(ctx context.Context, _ *emptypb.Empty) (*pb.List
 		return nil, status.Error(codes.Internal, "internal error")
 	}
 
-	userContacts, err := authUser.QueryContacts().All(ctx)
+	userContacts, err := authUser.QueryContacts().Order(contact.ByID(sql.OrderDesc())).All(ctx)
 	if err != nil {
 		log.Printf("failed to list contacts for user %s : %v", authUser.EmailID, err)
 		return nil, status.Error(codes.Internal, "internal error")
